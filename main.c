@@ -1,34 +1,41 @@
 #include "raylib.h"
 
-Rectangle AtlasRect(Rectangle atlasRect, int x, int y, int spriteWidth, int spriteHeight) {
-    Rectangle sprite = {
-        atlasRect.x + x * spriteWidth,
-        atlasRect.y + y * spriteHeight,
-        spriteWidth,
-        spriteHeight
-    };
-    return sprite;
-}
+struct Texture2DAtlas {
+    Texture2D texture;
+    int spriteHeight;
+    int spriteWidth;
+};
 
+Rectangle AtlasSpriteRect(struct Texture2DAtlas atlas, int col, int row) {
+    Rectangle spriteRect = {
+        col * atlas.spriteWidth,
+        row * atlas.spriteHeight,
+        atlas.spriteWidth,
+        atlas.spriteHeight,
+    };
+    return spriteRect;
+}
 
 int main() {
     InitWindow(800, 600, "Hello Raylib");
     SetTargetFPS(144);
 
-    Texture2D atlas = LoadTexture("assets/cards_small.png");
+    struct Texture2DAtlas atlas = {
+        .texture = LoadTexture("assets/cards_small.png"),
+        .spriteHeight = 41,
+        .spriteWidth = 71,
+    };
 
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(BLACK);
         DrawText("Hello Raylib!", 190, 200, 20, LIGHTGRAY);
 
-        Rectangle spriteRect = AtlasRect((Rectangle){0,0, atlas.width, atlas.height}, 1, 2, 32, 32);
-        DrawTextureRec(atlas, spriteRect, (Vector2){100,100}, WHITE);
-
+        Rectangle spriteRect = AtlasSpriteRect(atlas, 11, 2);
+        DrawTextureRec(atlas.texture, spriteRect, (Vector2){100, 100}, WHITE);
 
         EndDrawing();
     }
-
 
     CloseWindow();
     return 0;
